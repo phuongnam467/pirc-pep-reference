@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline Verification Gateway · AUREVIA</title>
+<meta name="description" content="Verify a PiProof document entirely inside your browser — the document never leaves this tab.">
+<link rel="stylesheet" href="/gateway-src/gateway.css">
+</head>
+<body>
+<div class="brand">AUREVIA</div>
+<div class="sub">Offline Verification Gateway — cryptographic truth, zero disclosure.</div>
+<div class="privacy">🔒 This page runs the full verification pipeline inside your browser.
+Your document is never uploaded, logged, or transmitted anywhere.</div>
+<h1>Paste a signed event, PiProof, or Evidence Passport — or open a link of the
+form <code>…/gateway#d=&lt;document&gt;</code></h1>
+
+<div id="inputwrap">
+  <textarea id="doc" spellcheck="false" placeholder='{"v":1,"app_id":…}'></textarea>
+  <div class="row">
+    <button id="verify">VERIFY LOCALLY</button>
+    <label class="file">or load a file: <input type="file" id="file" accept=".json,application/json"></label>
+    <span class="mono" id="reginfo"></span>
+  </div>
+</div>
+
+<div id="verdict" class="hidden"></div>
+<div id="results" class="hidden"></div>
+<p class="note" id="note"></p>
+
+<script type="module" src="/gateway-src/gateway.app.mjs"></script>
+</body>
+</html>

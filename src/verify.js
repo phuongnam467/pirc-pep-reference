@@ -10,7 +10,15 @@ export function signingBytesFromEvent(event) {
   return Buffer.from(DOMAIN + '\n' + canonicalize(body), 'utf8');
 }
 
-export function verifySignedEvent(event, { registry, nonceStore, now = Date.now() }) {
+import { timed } from './observability.js';
+
+export function verifySignedEvent(event, opts = {}) {
+  const { metrics = null } = opts;
+  if (!metrics) return _verifySignedEvent(event, opts);
+  return timed(metrics, 'signed_event_verify', () => _verifySignedEvent(event, opts));
+}
+
+function _verifySignedEvent(event, { registry, nonceStore, now = Date.now() }) {
   const checks = [];
   const record = (check, pass) => checks.push({ check, pass });
   const reject = (check, code) => {

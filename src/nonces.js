@@ -1,7 +1,8 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
-const NONCE_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}:[0-9a-f]{32}$/;
+export const NONCE_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}:[0-9a-f]{32}$/;
 
 function sleepSync(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -38,9 +39,15 @@ export class InMemoryNonceStore {
 
 // Durable, cross-process-safe nonce store built only on Node stdlib.
 //
-// Guarantees:
-//   - mutual exclusion across processes via an O_EXCL lockfile with stale-lock
-//     takeover, so two verifier instances can never both win the same claim
+// Guarantees (precise — see docs/FORMAL_MODEL.md INV-03 and SECURITY.md):
+//   - mutual exclusion across processes via an O_EXCL lockfile whose owner is
+//     recorded (pid + hostname + acquisition time). Takeover of a stuck lock
+//     is liveness-aware: on the same host a lock held by a LIVE process is
+//     never stolen, so a slow fsync cannot cause double-accept; only locks
+//     whose owner is provably dead (ESRCH) are taken over, after the stale
+//     window. Locks from other hosts or legacy/unparseable locks fall back to
+//     time-based takeover as a documented last resort (shared volumes should
+//     run RedisNonceStore instead — see docs/NONCE_STORES.md).
 //   - crash durability via write + fsync before the lock is released: a claim
 //     that returned true survives a hard restart (fail-closed replay window)
 //   - corruption tolerance: malformed or truncated trailing lines are skipped
@@ -83,22 +90,107 @@ export class FileNonceStore extends InMemoryNonceStore {
     }
   }
 
+  // Reads the lock owner record, if any. Returns null for legacy/empty or
+  // unparseable lock files — those predate ownership records and are handled
+  // by time-based takeover only.
+  _readLockOwner() {
+    let raw;
+    try {
+      raw = fs.readFileSync(this.lockPath, 'utf8');
+    } catch {
+      return null; // lock vanished between stat and read
+    }
+    try {
+      const rec = JSON.parse(raw);
+      if (rec && typeof rec === 'object' && Number.isFinite(rec.pid) && typeof rec.host === 'string') {
+        return { pid: rec.pid, host: rec.host };
+      }
+    } catch {
+      /* fall through */
+    }
+    return null;
+  }
+
+  // True when the pid belongs to a live process on this machine. process.kill
+  // with signal 0 performs a permission check without signalling: ESRCH means
+  // no such process (dead), EPERM means the process exists but is owned by
+  // another user (alive), and success obviously means alive.
+  _pidAlive(pid) {
+    if (!Number.isInteger(pid) || pid <= 0) return false;
+    try {
+      process.kill(pid, 0);
+      return true;
+    } catch (err) {
+      return err.code === 'EPERM';
+    }
+  }
+
   _acquireLock() {
     const deadline = Date.now() + this.lockTimeoutMs;
+    const self = this;
     for (;;) {
       try {
         const fd = fs.openSync(this.lockPath, 'wx');
+        // Record ownership immediately. A crash in the microseconds before
+        // this write leaves an empty lock file, which the anonymous-lock path
+        // below handles via the stale window.
+        try {
+          fs.writeSync(
+            fd,
+            JSON.stringify({ v: 1, pid: process.pid, host: os.hostname(), acquiredAt: Date.now() }) + '\n',
+            null,
+            'utf8'
+          );
+        } catch {
+          /* lock file still functions as an O_EXCL mutex without the record */
+        }
         return fd;
       } catch (err) {
         if (err.code !== 'EEXIST') throw err;
+        const owner = self._readLockOwner();
+        let age = Infinity;
         try {
-          const age = Date.now() - fs.statSync(this.lockPath).mtimeMs;
-          if (age > this.staleLockMs) {
-            fs.unlinkSync(this.lockPath);
+          age = Date.now() - fs.statSync(this.lockPath).mtimeMs;
+        } catch {
+          continue; // lock vanished between stat and everything else
+        }
+        if (owner && owner.host === os.hostname()) {
+          if (self._pidAlive(owner.pid)) {
+            // Same-host live owner: NEVER take over, regardless of age. A
+            // wedged-but-alive verifier keeps its mutual exclusion; we wait.
+            if (Date.now() > deadline) {
+              throw new Error(
+                `FileNonceStore: ${this.lockPath} is held by live process ${owner.pid} ` +
+                  `(waited ${this.lockTimeoutMs}ms) — refusing to steal a live lock`
+              );
+            }
+            sleepSync(5);
             continue;
           }
-        } catch {
-          continue; // lock vanished between stat and unlink attempts
+          // Owner recorded but provably dead on this host: crash residue.
+          if (age > this.staleLockMs) {
+            try {
+              fs.unlinkSync(this.lockPath);
+            } catch {
+              /* someone else reclaimed it first */
+            }
+            continue;
+          }
+        } else {
+          // Foreign-host owner (shared volume), or anonymous/legacy lock:
+          // liveness cannot be verified across hosts, so fall back to the
+          // stale window as a documented last resort. Deployments that share
+          // a volume between hosts should run RedisNonceStore instead
+          // (docs/NONCE_STORES.md); there, FileNonceStore is not the safety
+          // mechanism at all.
+          if (age > this.staleLockMs) {
+            try {
+              fs.unlinkSync(this.lockPath);
+            } catch {
+              /* someone else reclaimed it first */
+            }
+            continue;
+          }
         }
         if (Date.now() > deadline) {
           throw new Error(`FileNonceStore: could not acquire ${this.lockPath} within ${this.lockTimeoutMs}ms`);

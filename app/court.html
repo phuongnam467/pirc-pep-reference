@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AUREVIA Arbitration Court</title>
+<link rel="stylesheet" href="/gateway-src/court.css">
+<script type="module" src="/gateway-src/court.app.mjs"></script>
+</head>
+<body>
+<header class="top">
+  <h1>AUREVIA <span>Arbitration Court</span></h1>
+  <p class="tagline">decentralized verifiable arbitration — judges are keys, verdicts are multi-signatures,
+  every ruling can be replayed by anyone. <strong>AI argues; keys decide.</strong></p>
+</header>
+
+<section class="controls">
+  <button id="demoBtn" type="button">Run full arbitration scenario</button>
+  <span id="market" class="market"></span>
+</section>
+
+<section id="verdict" class="verdict hidden"></section>
+
+<section class="cases">
+  <h2>Cases on this host</h2>
+  <p class="note">Demo authority: this preview host holds the judge keys so the lifecycle is clickable.
+  In production each judge key lives with its owner and ballots arrive as signed attestations.</p>
+  <div id="cases"><p class="empty">no cases yet — run the scenario above.</p></div>
+</section>
+
+<footer><a href="/">← dashboard</a></footer>
+</body>
+</html>

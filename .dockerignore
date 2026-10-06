@@ -1,0 +1,9 @@
+node_modules
+.git
+.github
+test
+tests
+scripts
+docs
+vectors
+*.md

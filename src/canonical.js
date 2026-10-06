@@ -25,8 +25,31 @@ export function canonicalize(value, depth = 0) {
   if (t === 'string') return JSON.stringify(value.normalize('NFC'));
   if (Array.isArray(value)) return '[' + value.map((v) => canonicalize(v, depth + 1)).join(',') + ']';
   if (t === 'object') {
-    const keys = Object.keys(value).sort();
-    return '{' + keys.map((k) => JSON.stringify(k.normalize('NFC')) + ':' + canonicalize(value[k], depth + 1)).join(',') + '}';
+    // Hardening: two distinct raw keys can normalize (NFC) to the same string
+    // ("e\u0301" and "\u00e9" both become "é"). Sorting happens on raw keys,
+    // serialization on normalized ones, so such collisions would silently
+    // merge distinct fields into one canonical entry. Reject them instead.
+    const seen = new Set();
+    for (const raw of Object.keys(value)) {
+      const norm = raw.normalize('NFC');
+      if (seen.has(norm)) {
+        throw new CanonicalError(`normalized key collision under NFC: ${JSON.stringify(raw)}`);
+      }
+      seen.add(norm);
+    }
+    // Profile v1.1: sort the NFC FORMS, not the raw keys. Sorting raw keys
+    // while serializing their NFC forms made canonicalization deterministic
+    // per value but NOT a fixed point: canon(parse(canon(x))) could reorder
+    // keys whenever normalization changed a key's sort position, silently
+    // breaking isCanonical() on documents the protocol itself produced.
+    // With NFC-form sorting, the emitted key text IS the sort key, so the
+    // canonical form is idempotent under parse -> canonicalize. (Found by
+    // scripts/fuzz.mjs cross-checking the property suite; see CHANGELOG
+    // v0.15.0.)
+    const entries = Object.keys(value)
+      .map((raw) => [raw, raw.normalize('NFC')])
+      .sort((a, b) => (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
+    return '{' + entries.map(([raw, norm]) => JSON.stringify(norm) + ':' + canonicalize(value[raw], depth + 1)).join(',') + '}';
   }
   throw new CanonicalError(`unsupported type: ${t}`);
 }

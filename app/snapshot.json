@@ -1,0 +1,117 @@
+{
+  "schema": "PiRC1-TransparencyDashboard/1",
+  "generated_at": 1787526427891,
+  "price_floor": {
+    "circulating_supply": 12500000,
+    "spot_price": 1.5,
+    "p_floor_marginal": 0.094876116031,
+    "p_floor_average_realized": 0.377245508982,
+    "floor_to_spot_ratio": 0.063250744021,
+    "formula": "p_floor = (R·Q) / (R+S)²",
+    "disclaimer": "descriptive AMM mathematics over caller-supplied reserves; not a valuation, promise or advice"
+  },
+  "pool_health": {
+    "snapshot_count": 5,
+    "invariant_series": [
+      {
+        "t": 1786316827891,
+        "k": 22815000000000
+      },
+      {
+        "t": 1786748827891,
+        "k": 24040000000000
+      },
+      {
+        "t": 1787094427891,
+        "k": 25215000000000
+      },
+      {
+        "t": 1787353627891,
+        "k": 25854500000000
+      },
+      {
+        "t": 1787526427891,
+        "k": 26460000000000
+      }
+    ],
+    "current_k": 26460000000000,
+    "peak_k": 26460000000000,
+    "max_drawdown_pct": 0,
+    "extraction_events": 0,
+    "healthy": true,
+    "rule": "k may grow with retained fees; any decrease beyond tolerance flags liquidity extraction"
+  },
+  "escrow_lock_status": {
+    "verifiable": true,
+    "v": 1,
+    "escrow_id": "tge-escrow-main",
+    "state": "SIGNING_AUTHORITY_REVOKED",
+    "previous_key_fingerprint": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+    "effective_at": 1787526427891,
+    "anchor": "demo-anchor:0000000000000000000000000000000000000000",
+    "checks": [
+      {
+        "check": "SCHEMA",
+        "pass": true
+      },
+      {
+        "check": "CANONICALIZATION",
+        "pass": true
+      },
+      {
+        "check": "KEY_ACTIVE",
+        "pass": true
+      },
+      {
+        "check": "SIGNATURE",
+        "pass": true
+      },
+      {
+        "check": "FRESHNESS",
+        "pass": true
+      },
+      {
+        "check": "REPLAY_DETECTED_GUARD",
+        "pass": true
+      }
+    ]
+  },
+  "engagement": {
+    "window_days": 30,
+    "method": "PoA/PoU composite × Consistency Factor; inputs restricted to registry-verified signatures",
+    "leaderboard": [
+      {
+        "rank": 1,
+        "pioneer_uid_hash": "h1:Y8u_BXhSfHE8bZWrxKBpRjN_g-tAY4WytUJipD7cqqs",
+        "poa_points": 2,
+        "pou_points": 108,
+        "consistency_factor": 0.566667,
+        "score": 62.33337
+      },
+      {
+        "rank": 2,
+        "pioneer_uid_hash": "h1:5BFs7O3CQEyFGjR2pJtHkEZjrg0_BX083B7kOkNi12I",
+        "poa_points": 0,
+        "pou_points": 100,
+        "consistency_factor": 0.516667,
+        "score": 51.6667
+      },
+      {
+        "rank": 3,
+        "pioneer_uid_hash": "h1:VshGjLaP_L3OpmSOxl3ZhmiVEKPkOGVnuj0GTCCsiHc",
+        "poa_points": 0,
+        "pou_points": 8,
+        "consistency_factor": 0.516667,
+        "score": 4.133336
+      },
+      {
+        "rank": 4,
+        "pioneer_uid_hash": "h1:tDRHK6NoXjOnhRoTKTDgrwfIP3_jMJgbi_9hdb4Bih8",
+        "poa_points": 1,
+        "pou_points": 0,
+        "consistency_factor": 0.516667,
+        "score": 0.516667
+      }
+    ]
+  }
+}

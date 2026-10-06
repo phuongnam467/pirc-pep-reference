@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AUREVIA">
+  <defs>
+    <linearGradient id="au-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7e2a4"/>
+      <stop offset=".38" stop-color="#f5c451"/>
+      <stop offset=".62" stop-color="#c99a2e"/>
+      <stop offset="1" stop-color="#8a6a1d"/>
+    </linearGradient>
+    <linearGradient id="au-navy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141d33"/>
+      <stop offset="1" stop-color="#070b12"/>
+    </linearGradient>
+    <linearGradient id="au-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7e2a4"/>
+      <stop offset=".5" stop-color="#b98e27"/>
+      <stop offset="1" stop-color="#6e5514"/>
+    </linearGradient>
+  </defs>
+
+  <!-- shield -->
+  <path d="M256 34 L458 96 V262 C458 372 372 442 256 482 C140 442 54 372 54 262 V96 Z"
+        fill="url(#au-navy)" stroke="url(#au-edge)" stroke-width="14"/>
+
+  <!-- inner hairline -->
+  <path d="M256 66 L430 118 V260 C430 352 356 412 256 448 C156 412 82 352 82 260 V118 Z"
+        fill="none" stroke="url(#au-gold)" stroke-width="4" opacity=".55"/>
+
+  <!-- cryptographic verification mark: hash ticks + check -->
+  <g stroke="url(#au-gold)" stroke-width="10" stroke-linecap="round" opacity=".9">
+    <path d="M150 208 H236"/>
+    <path d="M150 244 H214"/>
+    <path d="M150 280 H228"/>
+  </g>
+  <path d="M258 300 L308 350 L396 226"
+        fill="none" stroke="url(#au-gold)" stroke-width="30"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- seal point -->
+  <circle cx="256" cy="404" r="12" fill="url(#au-gold)"/>
+</svg>

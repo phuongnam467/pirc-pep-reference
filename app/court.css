@@ -1,0 +1,38 @@
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0 auto; padding: 1.5rem; max-width: 960px;
+  font: 15px/1.55 ui-monospace, "Cascadia Code", Consolas, monospace;
+  background: #0b0e14; color: #d7dde8;
+}
+a { color: #7aa2f7; }
+.top h1 { margin: 0 0 .25rem; font-size: 1.5rem; letter-spacing: .5px; }
+.top h1 span { color: #bb9af7; }
+.tagline { color: #9aa5b8; margin-top: .25rem; }
+.controls { display: flex; gap: 1rem; align-items: center; margin: 1.4rem 0; flex-wrap: wrap; }
+button {
+  background: #bb9af7; color: #14141f; border: 0; padding: .6rem 1.1rem;
+  font: inherit; font-weight: 700; cursor: pointer; border-radius: 4px;
+}
+button:hover { filter: brightness(1.1); }
+.market { color: #9aa5b8; font-size: .85rem; }
+.verdict { border: 1px solid #2f3a52; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+.verdict.hidden { display: none; }
+.verdict.ok { border-color: #2e7d51; }
+.verdict.bad { border-color: #8a3b3b; }
+.verdict h3 { margin: .1rem 0 .5rem; font-size: 1.05rem; }
+.cases h2 { font-size: 1.05rem; }
+.note, .empty { color: #78829a; font-size: .85rem; }
+.case { border: 1px solid #232b3d; border-radius: 6px; padding: .9rem 1.1rem; margin-bottom: .9rem; background: #0f131c; }
+.case header { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.case .id { color: #7aa2f7; word-break: break-all; }
+.badge { padding: .1rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+.badge.SETTLED { background: #17352a; color: #58d69a; }
+.badge.UNRESOLVED { background: #38301a; color: #e0b45c; }
+.badge.CHALLENGE_WINDOW { background: #1c2740; color: #7aa2f7; }
+.badge.DELIBERATION_ROUND_1, .badge.DELIBERATION_ROUND_2 { background: #26203a; color: #bb9af7; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: .15rem .9rem; margin: .5rem 0; font-size: .88rem; }
+.kv dt { color: #78829a; } .kv dd { margin: 0; }
+.replay-ok { color: #58d69a; } .replay-bad { color: #ef6b6b; }
+details summary { cursor: pointer; color: #9aa5b8; font-size: .85rem; }
+pre { overflow-x: auto; background: #0b0e14; border: 1px solid #232b3d; padding: .6rem; font-size: .78rem; }

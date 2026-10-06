@@ -7,7 +7,12 @@ import { hashUid, signEvent } from '../src/events.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const VECTORS = path.join(ROOT, 'vectors');
 
-fs.rmSync(VECTORS, { recursive: true, force: true });
+// Selective cleanup: this generator owns valid/, attacks/ and registry.json.
+// vectors/canonical/ belongs to gen-canonical-vectors.mjs and MUST survive
+// this regeneration untouched.
+fs.rmSync(path.join(VECTORS, 'valid'), { recursive: true, force: true });
+fs.rmSync(path.join(VECTORS, 'attacks'), { recursive: true, force: true });
+fs.rmSync(path.join(VECTORS, 'registry.json'), { force: true });
 fs.mkdirSync(path.join(VECTORS, 'valid'), { recursive: true });
 fs.mkdirSync(path.join(VECTORS, 'attacks'), { recursive: true });
 

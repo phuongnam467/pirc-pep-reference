@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AUREVIA — Trust. Verified. Transparent.</title>
+<meta name="theme-color" content="#070b12">
+<script>document.documentElement.classList.add('js')</script>
+<meta name="description" content="Real-time mathematical floor, x·y=k invariant health, escrow lock attestations and verified engagement — powered by PEP/1 signed proofs.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+<link rel="apple-touch-icon" href="assets/icon.svg">
+<style>
+  :root{
+    --bg:#070b12; --ink:#eef3fb; --dim:#93a0ba; --line:rgba(148,170,220,.14);
+    --glass:rgba(18,26,44,.55); --glass2:rgba(13,19,33,.65);
+    --a1:#8a63ff; --a2:#5aa7ff; --a3:#3ddc97; --gold:#f5c451; --red:#ff6d7e;
+    --r:20px; --shadow:0 20px 60px -20px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Naskh Arabic",sans-serif;
+    min-height:100vh; overflow-x:hidden;
+  }
+  [dir=rtl] body{font-family:"Segoe UI","Noto Naskh Arabic",system-ui,sans-serif}
+  /* aurora */
+  .aurora{position:fixed;inset:-20%;z-index:-1;filter:blur(90px);opacity:.5;
+    background:
+      radial-gradient(40% 40% at 20% 20%,#8a63ff55,transparent 60%),
+      radial-gradient(35% 35% at 80% 10%,#5aa7ff4d,transparent 60%),
+      radial-gradient(45% 45% at 70% 85%,#3ddc9738,transparent 60%),
+      radial-gradient(30% 30% at 15% 80%,#f5c45126,transparent 60%);
+    animation:drift 26s ease-in-out infinite alternate}
+  @keyframes drift{to{transform:translate3d(-6%,4%,0) scale(1.08) rotate(8deg)}}
+  @media (prefers-reduced-motion:reduce){.aurora{animation:none}*,*::before,*::after{transition:none!important}}
+
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);
+    background:linear-gradient(180deg,rgba(7,11,18,.9),rgba(7,11,18,.55));
+    border-bottom:1px solid var(--line)}
+  .nav{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px clamp(14px,4vw,32px)}
+  .logo{width:42px;height:42px;border-radius:14px;flex:none;
+        box-shadow:0 0 0 1px var(--line),0 10px 30px -12px #5aa7ff88;overflow:hidden;background:#0d1322}
+  .logo img,.logo svg{width:100%;height:100%;display:block}
+  .brand h1{font-size:17px;font-weight:800;letter-spacing:.2px;line-height:1.15}
+  .brand small{color:var(--dim);font-size:11.5px;display:block;margin-top:1px}
+  .nav .spacer{flex:1}
+  .chipbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .chip{font-size:12px;color:var(--dim);border:1px solid var(--line);background:var(--glass2);
+    padding:6px 12px;border-radius:99px;cursor:pointer;user-select:none;transition:.25s}
+  .chip:hover{color:var(--ink);border-color:#5aa7ff66}
+  .chip.on{color:#071018;background:linear-gradient(90deg,var(--gold),var(--a3));font-weight:700;border:none}
+  .statusdot{width:8px;height:8px;border-radius:99px;background:var(--gold);box-shadow:0 0 10px currentColor;display:inline-block;margin-inline-end:6px}
+.statusdot.live{background:var(--a3)}
+.statusdot.warn{background:var(--gold)}
+.statusdot.err{background:var(--red)}
+
+  main{max-width:1120px;margin:0 auto;padding:22px clamp(14px,4vw,32px) 80px;
+    display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+  .hero-line{text-align:center;margin:-2px auto 8px;padding:0 clamp(14px,4vw,32px)}
+  .hero-line b{display:inline-block;font-size:clamp(17px,2.6vw,22px);letter-spacing:.02em}
+  .hero-line span{display:inline-block;margin-top:5px;color:var(--dim);font-size:13.5px;max-width:720px}
+  .card{grid-column:span 12;composes:none;position:relative;
+    background:linear-gradient(165deg,var(--glass),var(--glass2));
+    border:1px solid var(--line);border-radius:var(--r);padding:20px;backdrop-filter:blur(14px);
+    box-shadow:var(--shadow);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  /* reveal animation only when JS is confirmed running; content stays visible otherwise */
+  .js .card{opacity:0;transform:translateY(14px)}
+  .js .card.in{opacity:1;transform:none}
+  @media(min-width:900px){.c6{grid-column:span 6}.c7{grid-column:span 7}.c5{grid-column:span 5}}
+  .card h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--dim);
+    display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+  .big{font-size:clamp(34px,7vw,46px);font-weight:800;letter-spacing:-1px;
+       background:linear-gradient(90deg,var(--gold),var(--a3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .unit{color:var(--dim);font-size:13px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .pill{font-size:12.5px;color:var(--dim);background:#0b1222cc;border:1px solid var(--line);
+        padding:6px 12px;border-radius:99px}.pill b{color:var(--ink)}
+  .badge{font-size:10.5px;font-weight:800;letter-spacing:.08em;padding:5px 11px;border-radius:99px;white-space:nowrap}
+  .ok{color:var(--a3);background:rgba(61,220,151,.09);box-shadow:inset 0 0 0 1px rgba(61,220,151,.4)}
+  .bad{color:var(--red);background:rgba(255,109,126,.09);box-shadow:inset 0 0 0 1px rgba(255,109,126,.4)}
+  .neutral{color:var(--dim);box-shadow:inset 0 0 0 1px var(--line)}
+  .meter{height:10px;border-radius:99px;background:#0b1222;border:1px solid var(--line);margin-top:16px;overflow:hidden}
+  .meter>i{display:block;height:100%;width:0;border-radius:inherit;
+    background:linear-gradient(90deg,var(--gold),var(--a3));transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;
+     text-align:start;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:11px 8px;border-bottom:1px solid rgba(148,170,220,.08);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tbody tr{transition:background .2s}
+  tbody tr:hover{background:rgba(90,167,255,.05)}
+  .rank-medal{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:9px;font-weight:800;font-size:12.5px}
+  .m1{background:linear-gradient(135deg,#ffe9a8,#f5c451);color:#231a02}
+  .m2{background:linear-gradient(135deg,#e6edf7,#b9c6da);color:#10161f}
+  .m3{background:linear-gradient(135deg,#f1b48a,#cd7f43);color:#241202}
+  .mn{color:var(--dim)}
+  .sbar{height:7px;border-radius:99px;background:#0b1222;border:1px solid var(--line);min-width:70px}
+  .sbar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+
+  canvas{width:100%;height:170px;display:block;border-radius:12px}
+  .checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .check{font-family:ui-monospace,monospace;font-size:11px;color:var(--a3);
+         border:1px dashed rgba(61,220,151,.45);padding:4px 9px;border-radius:9px}
+  .check.f{color:var(--red);border-color:rgba(255,109,126,.5)}
+
+  .pirow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .btn{appearance:none;border:none;cursor:pointer;font-weight:700;font-size:13.5px;
+    padding:11px 18px;border-radius:14px;color:#071018;
+    background:linear-gradient(90deg,var(--gold),var(--a3));
+    box-shadow:0 12px 28px -12px #f5c45177;transition:transform .15s,filter .2s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .btn:active{transform:translateY(1px) scale(.99)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+  #pi-user{display:flex;align-items:center;gap:9px;font-size:13.5px}
+  .avatar{width:30px;height:30px;border-radius:99px;background:linear-gradient(135deg,var(--a1),var(--a2));
+          display:grid;place-items:center;font-weight:800;color:#fff;font-size:13px}
+
+  footer{max-width:1120px;margin:0 auto;padding:26px clamp(14px,4vw,32px) 46px;
+         color:var(--dim);font-size:12px;line-height:1.8;border-top:1px solid var(--line)}
+  footer code{color:var(--a2)}
+  a{color:var(--a2);text-decoration:none}a:hover{text-decoration:underline}
+
+  /* skeletons */
+  .sk{position:relative;overflow:hidden;background:#0d1424;border-radius:12px;height:44px}
+  .sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+    background:linear-gradient(90deg,transparent,rgba(148,170,220,.12),transparent);
+    animation:shine 1.4s infinite}
+  @keyframes shine{to{transform:translateX(100%)}}
+
+  /* toasts */
+  #toasts{position:fixed;z-index:99;bottom:18px;inset-inline-start:18px;display:grid;gap:8px}
+  .toast{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);
+    padding:11px 16px;border-radius:14px;font-size:13px;box-shadow:var(--shadow);
+    animation:pop .35s cubic-bezier(.2,.9,.3,1.4)}
+  .toast.ok{border-color:rgba(61,220,151,.5)}
+  .toast.bad{border-color:rgba(255,109,126,.5)}
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+
+  :focus-visible{outline:2px solid var(--a2);outline-offset:2px;border-radius:8px}
+</style>
+<style>
+  /* PiProof explorer */
+  .pp-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+  @media(max-width:900px){.pp-grid{grid-template-columns:1fr}}
+  #pp-in{width:100%;min-height:230px;resize:vertical;background:var(--glass2);color:var(--ink);
+    border:1px solid var(--line);border-radius:14px;padding:14px;font-size:12.5px;line-height:1.5;
+    outline:none;transition:border-color .2s}
+  #pp-in:focus-visible{border-color:var(--gold)}
+  .pp-right{display:flex;flex-direction:column;gap:12px}
+  .pp-banner{font-weight:800;font-size:19px;letter-spacing:.06em;text-align:center;padding:13px 16px;
+    border-radius:14px;border:1px solid var(--line);transition:all .25s}
+  .pp-banner.idle{color:var(--dim);background:var(--glass)}
+  .pp-banner.ok{color:#08130c;background:linear-gradient(90deg,var(--a3),#7fe9bd);
+    box-shadow:0 0 34px -6px var(--a3);border-color:transparent}
+  .pp-banner.bad{color:#fff;background:linear-gradient(90deg,#c0344b,var(--red));
+    box-shadow:0 0 34px -6px var(--red);border-color:transparent}
+  .pp-steps{display:flex;flex-direction:column;gap:7px;min-height:60px}
+  .pp-step{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;
+    background:var(--glass);border:1px solid var(--line);font-size:13.5px;
+    opacity:0;transform:translateY(6px);animation:ppin .35s forwards}
+  @keyframes ppin{to{opacity:1;transform:none}}
+  .pp-step .ic{font-weight:900;width:20px;text-align:center}
+  .pp-step.p .ic{color:var(--a3)} .pp-step.f .ic{color:var(--red)}
+  .pp-step.f{border-color:rgba(255,109,126,.45)}
+  .pp-step small{margin-inline-start:auto;color:var(--dim);font-family:ui-monospace,monospace;
+    font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46%}
+  .pp-why summary{cursor:pointer;color:var(--gold);font-weight:600;font-size:14px;padding:6px 0}
+  .pp-why[open] summary{margin-bottom:6px}
+  @media(prefers-reduced-motion:reduce){.pp-step{animation:none;opacity:1;transform:none}}
+
+  /* Proof Passport */
+  .pass-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+  .pass-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--dim);font-weight:700}
+  .pass-form input,.pass-form select{background:var(--glass2);color:var(--ink);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;font-size:13.5px;font-family:inherit;outline:none;transition:border-color .2s}
+  .pass-form input:focus-visible,.pass-form select:focus-visible{border-color:var(--gold)}
+  #pass-out{width:100%;min-height:190px;resize:vertical;background:var(--glass2);color:var(--ink);
+    border:1px solid var(--line);border-radius:14px;padding:14px;font-size:12.5px;line-height:1.5;
+    outline:none;transition:border-color .2s}
+  #pass-out:focus-visible{border-color:var(--gold)}
+  .pass-head{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;font-family:ui-monospace,monospace;
+    font-size:12px;color:var(--dim);padding:4px 0 8px}
+  .pass-head b{color:var(--ink)}
+  .pp-grouplabel{font-size:11.5px;font-weight:800;letter-spacing:.08em;color:var(--gold);
+    text-transform:uppercase;padding:6px 2px 0}
+  .dispute-table{width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:13.5px}
+  .dispute-table td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .dispute-table td.q{color:#f5c451;font-weight:800;white-space:nowrap;width:1%}
+  .dispute-table td.s{text-align:center;font-weight:900;letter-spacing:.06em;white-space:nowrap}
+  .dispute-table td.s.OK{color:var(--a3)} .dispute-table td.s.INVALID{color:var(--red)}
+  .dispute-table td.s.UNVERIFIABLE{color:var(--gold)}
+  .dispute-table .mono{font-family:ui-monospace,monospace;font-size:11px;color:var(--dim);word-break:break-all}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+
+<header>
+  <div class="nav">
+    <div class="logo"><img src="assets/icon.svg" alt="AUREVIA"></div>
+    <div class="brand">
+      <h1 data-i18n="title">AUREVIA</h1>
+      <small data-i18n="subtitle">verified floor · invariant health · escrow lock · engagement</small>
+    </div>
+    <div class="spacer"></div>
+    <div class="chipbar">
+      <button class="chip" id="lang" aria-label="Toggle language">العربية</button>
+      <button class="chip" id="net"><span class="statusdot" id="netdot"></span><span id="nettxt" data-i18n="connecting">connecting…</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="hero-line">
+  <b data-i18n="hero_1">Don't trust the app. Verify the proof.</b><br>
+  <span data-i18n="hero_2">PiProof lets applications issue cryptographically verifiable proofs that independent parties can verify against their own trusted state.</span>
+  <span class="unit dim" style="display:block;margin-top:9px" data-i18n="carry_tagline">Proofs you can carry. Evidence anyone can verify.</span>
+</div>
+
+<main>
+  <!-- identity / Pi account -->
+  <section class="card c5" id="card-pi">
+    <h2 data-i18n="pi_account">Pi account</h2>
+    <div id="pi-user"><span class="sub dim" data-i18n="pi_preview">Preview mode — open inside Pi Browser to sign in.</span></div>
+    <div class="pirow" id="pi-actions">
+      <button class="btn" id="btn-auth" data-i18n="auth_btn">Authenticate with Pi</button>
+      <button class="btn ghost" id="btn-pay" disabled data-i18n="pay_btn">Support · 0.01 π</button>
+    </div>
+    <p class="unit" style="margin-top:12px" data-i18n="pi_note">Authentication uses the official Pi SDK. Payments require the app to be registered on the Pi Developer Portal; until then this is an honest demo of the flow.</p>
+  </section>
+
+  <!-- p_floor -->
+  <section class="card c7">
+    <h2><span data-i18n="floor_h">Dynamic price floor</span> <span class="badge neutral mono">p_floor = R·Q / (R+S)²</span></h2>
+    <div><span class="big" id="pfloor">—</span> <span class="unit" data-i18n="floor_unit">quote per token · marginal floor</span></div>
+    <div class="meter"><i id="ratio-bar"></i></div>
+    <div class="pills">
+      <span class="pill" data-i18n-html="spot">spot <b id="spot">—</b></span>
+      <span class="pill" data-i18n-html="avg_realized">avg realized <b id="avg">—</b></span>
+      <span class="pill" data-i18n-html="supply">circulating supply <b id="supply">—</b></span>
+      <span class="pill" data-i18n-html="floor_pct">floor is <b id="ratio-txt">—</b> of spot</span>
+    </div>
+  </section>
+
+  <!-- invariant -->
+  <section class="card c7">
+    <h2><span data-i18n="inv_h">x·y = k invariant health</span> <span class="badge neutral" id="health">—</span></h2>
+    <canvas id="kchart" width="900" height="340" role="img" aria-label="invariant k over time"></canvas>
+    <div class="pills">
+      <span class="pill" data-i18n-html="k_cur">current k <b id="kcur">—</b></span>
+      <span class="pill" data-i18n-html="k_peak">peak k <b id="kpeak">—</b></span>
+      <span class="pill" data-i18n-html="drawdown">max drawdown <b id="dd">—</b></span>
+      <span class="pill" data-i18n-html="extractions">extraction events <b id="ext">—</b></span>
+    </div>
+  </section>
+
+  <!-- escrow -->
+  <section class="card c5">
+    <h2><span data-i18n="escrow_h">Escrow lock status</span> <span class="badge neutral" id="escrow-badge">—</span></h2>
+    <div class="sk" style="height:64px" id="escrow-sk"></div>
+    <div id="escrow-body" class="unit" hidden></div>
+    <div class="checks" id="escrow-checks"></div>
+  </section>
+
+  <!-- leaderboard -->
+  <section class="card">
+    <h2><span data-i18n="lb_h">Engagement leaderboard</span>
+        <span class="badge neutral" data-i18n="lb_meta">PoA / PoU × Consistency Factor</span></h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>#</th><th data-i18n="lb_pioneer">Pioneer</th><th>PoA</th><th>PoU</th>
+          <th data-i18n="lb_days">Active days</th><th>CF</th><th data-i18n="lb_score">Score</th>
+        </tr></thead>
+        <tbody id="lb"><tr><td colspan="7"><div class="sk"></div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <!-- PiProof explorer -->
+  <section class="card" id="pp-card">
+    <h2><span data-i18n="pp_h">PiProof Explorer</span>
+        <span class="badge neutral" data-i18n="pp_sub">Verify. Don't trust.</span></h2>
+    <div class="pp-grid">
+      <div class="pp-left">
+        <textarea id="pp-in" class="mono" spellcheck="false" aria-label="PiProof JSON"
+                  placeholder='{ "type": "PiProof", … }'></textarea>
+        <div class="pirow">
+          <button class="btn" id="pp-verify" data-i18n="pp_verify">Verify proof</button>
+          <button class="btn ghost" id="pp-tamper-w" data-i18n="pp_tamper_w">Tamper · weight ×1000</button>
+          <button class="btn ghost" id="pp-tamper-s" data-i18n="pp_tamper_s">Tamper · flip signature</button>
+          <button class="btn ghost" id="pp-reset" data-i18n="pp_reset">Reset</button>
+        </div>
+        <p class="unit dim" id="pp-static" hidden data-i18n="pp_static"></p>
+      </div>
+      <div class="pp-right">
+        <div id="pp-verdict" class="pp-banner idle" data-i18n="pp_idle">AWAITING PROOF</div>
+        <div id="pp-steps" class="pp-steps" aria-live="polite"></div>
+        <details class="pp-why">
+          <summary data-i18n="pp_why">Why is this proof trusted?</summary>
+          <p class="unit" data-i18n="pp_why_body"></p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof Passport -->
+  <section class="card" id="pass-card">
+    <h2><span data-i18n="pass_h">AUREVIA Proof Passport</span>
+        <span class="badge neutral" data-i18n="pass_sub">One portable evidence record</span></h2>
+    <div class="pp-grid">
+      <div class="pp-left">
+        <div class="pass-form">
+          <label><span data-i18n="pass_issuer">Issuer</span>
+            <select id="pass-issuer">
+              <option value="demo-app">Demo App</option>
+              <option value="marketplace-demo" selected>Demo Marketplace</option>
+              <option value="demo-agent-service">Demo Agent Service</option>
+            </select></label>
+          <label><span data-i18n="pass_class">Event class</span>
+            <select id="pass-class"><option value="A">A · high-value</option><option value="B">B · KYC</option><option value="C" selected>C · daily</option></select></label>
+          <label><span data-i18n="pass_action">Action</span>
+            <select id="pass-action"></select></label>
+          <label><span data-i18n="pass_weight">Weight (1–10000)</span>
+            <input id="pass-weight" type="number" min="1" max="10000" value="100"></label>
+          <label><span data-i18n="pass_subject">Subject (pseudonymous)</span>
+            <input id="pass-subject" type="text" maxlength="64" placeholder="alice-demo" spellcheck="false"></label>
+        </div>
+        <div class="pirow">
+          <button class="btn" id="pass-issue" data-i18n="pass_issue">Issue &amp; Sign</button>
+          <button class="btn ghost" id="pass-demo" data-i18n="pass_demo">▶ Run the 60-second demo</button>
+          <button class="btn ghost" id="pass-download" disabled data-i18n="pass_download">Download .json</button>
+          <button class="btn ghost" id="pass-share" disabled data-i18n="pass_share">Copy share link</button>
+          <button class="btn ghost" id="pass-send" disabled data-i18n="pass_send">Open in Explorer</button>
+          <button class="btn ghost" id="dispute-run" data-i18n="dispute_btn">Generate dispute report</button>
+          <a class="btn ghost" id="verify-link" href="verify.html" data-i18n="verify_link">Public verification</a>
+          <label class="btn ghost" style="display:inline-flex;align-items:center">
+            <span data-i18n="pass_import">Import proof / passport</span>
+            <input id="pass-file" type="file" accept=".json,application/json" hidden>
+          </label>
+        </div>
+        <textarea id="pass-out" class="mono" spellcheck="false" aria-label="Passport JSON"
+                  placeholder='{ "type": "AUREVIA-Evidence-Passport", … }' readonly></textarea>
+      </div>
+      <div class="pp-right">
+        <div id="pass-verdict" class="pp-banner idle" data-i18n="pass_idle">AWAITING PASSPORT</div>
+        <div id="pass-head" class="pass-head" hidden></div>
+        <div id="pass-steps" class="pp-steps" aria-live="polite"></div>
+        <details class="pp-why">
+          <summary data-i18n="pass_why">Why carry a passport?</summary>
+          <p class="unit" data-i18n="pass_why_body"></p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dispute Mode -->
+  <section class="card" id="dispute-card">
+<h2><span data-i18n="dispute_h">Dispute Mode</span>
+<span class="badge neutral" data-i18n="dispute_sub">Deterministic evidence adjudication — from claim to final verdict</span></h2>
+    <div id="dispute-verdict" class="pp-banner idle" data-i18n="dispute_idle">NO DISPUTE REPORT YET</div>
+    <table class="dispute-table" id="dispute-chain" hidden></table>
+    <div class="pirow">
+      <button class="btn ghost" id="dispute-export" disabled data-i18n="dispute_export">Export report (.json)</button>
+    </div>
+    <p class="unit dim" data-i18n="dispute_note"></p>
+  </section>
+
+  <!-- Agent Evidence -->
+  <section class="card" id="agent-card">
+    <h2><span data-i18n="agent_h">Agent Evidence</span>
+        <span class="badge neutral" data-i18n="agent_sub">AI accountability trail</span></h2>
+    <div class="pass-form">
+      <label><span data-i18n="agent_name">Agent id</span>
+        <input id="agent-name" type="text" value="alpha" maxlength="32" spellcheck="false"></label>
+      <label><span data-i18n="agent_task">Completed task</span>
+        <select id="agent-task">
+          <option value="data_labeling_47">data_labeling_47</option>
+          <option value="summarize_batch_12">summarize_batch_12</option>
+          <option value="translate_docs_9">translate_docs_9</option>
+        </select></label>
+      <label><span data-i18n="agent_weight">Weight</span>
+        <input id="agent-weight" type="number" min="1" max="100" value="10"></label>
+    </div>
+    <div class="pirow">
+      <button class="btn" id="agent-issue" data-i18n="agent_issue">Issue agent evidence</button>
+    </div>
+    <p class="unit dim" data-i18n="agent_note"></p>
+  </section>
+</main>
+
+<footer>
+  <span data-i18n="footer_trust">Every number here comes from one verifiable snapshot assembled by</span>
+  <code>src/dashboard.js</code>
+  <span data-i18n="footer_trust2">from registry-verified Ed25519 signatures only. Reproduce:</span>
+  <code>git clone https://github.com/EslaM-X/piproof && cd piproof && npm run app</code><br>
+  <span data-i18n="footer_product">Cryptographic transparency infrastructure for decentralized ecosystems.</span><br>
+  <span data-i18n="footer_scope">Descriptive mathematics over caller-supplied reserves — this page does not price, value, endorse or promote any asset.</span><br>
+  Pi, Pi Network and the Pi logo are trademarks of the Pi Community Company.
+  <span data-i18n="footer_comm">Community-built; not affiliated with or maintained by the Pi Core Team.</span>
+  © 2026 EslaM-X · <a href="https://github.com/EslaM-X/piproof/blob/main/LICENSE">PiOS License</a>
+</footer>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+/* ---------- utils (must be first — everything below depends on $) ---------- */
+const $=id=>document.getElementById(id);
+
+/* ---------- i18n ---------- */
+const I18N = {
+  en:{
+    title:"AUREVIA",
+    subtitle:"Trust. Verified. Transparent.",
+    connecting:"connecting…", live:"LIVE", offline:"OFFLINE",
+    pi_account:"Pi account", auth_btn:"Authenticate with Pi", pay_btn:"Support · 0.01 π",
+    pi_preview:"Preview mode — open inside Pi Browser to sign in.",
+    pi_note:"Authentication uses the official Pi SDK. Payments require the app to be registered on the Pi Developer Portal; until then this is an honest demo of the flow.",
+    signed_in:"Signed in", auth_ok:"Authenticated as", auth_fail:"Authentication failed",
+    pay_ok:"Payment submitted — thank you!", pay_fail:"Payment cancelled or failed",
+    sdk_missing:"Pi environment unavailable — running in preview mode",
+    floor_h:"Dynamic price floor", floor_unit:"quote per token · marginal floor",
+    inv_h:"x·y = k invariant health", intact:"INTACT", compromised:"COMPROMISED",
+    escrow_h:"Escrow lock status", escrow_none:"No attestation in snapshot.",
+    escrow_verified:"REVOKED & VERIFIED", escrow_invalid:"ATTESTATION INVALID",
+    lb_h:"Engagement leaderboard", lb_pioneer:"Pioneer", lb_days:"Active days", lb_score:"Score",
+    footer_trust:"Every number here comes from one verifiable snapshot assembled by",
+    footer_trust2:"from registry-verified Ed25519 signatures only. Reproduce:",
+    footer_scope:"Descriptive mathematics over caller-supplied reserves — this page does not price, value, endorse or promote any asset.",
+    footer_product:"Cryptographic transparency infrastructure for decentralized ecosystems.",
+    footer_comm:"Community-built; not affiliated with or maintained by the Pi Core Team.",
+    snap_loaded:"Snapshot loaded & rendered",
+    pp_h:"PiProof Explorer", pp_sub:"Verify. Don't trust.",
+    pp_verify:"Verify proof", pp_tamper_w:"Tamper · weight ×1000",
+    pp_tamper_s:"Tamper · flip signature", pp_reset:"Reset",
+    pp_idle:"AWAITING PROOF", pp_trusted:"✓ TRUSTED PROOF",
+    pp_invalid:"✗ INVALID PROOF", pp_checking:"VERIFYING…",
+    pp_why:"Why is this proof trusted?",
+    pp_why_body:"A PiProof wraps exactly one Ed25519-signed event. This verifier re-checks every layer itself against its own registry copy: envelope integrity, registry epoch root, claim schema, issuer registration, key status (including revocation), deterministic canonical encoding, signature, freshness window, weight ceiling, eligibility and the single-use nonce. The issuing app is never trusted — only the mathematics is.",
+    pp_note:"Verification runs server-side on the exact code path of src/verify.js. The nonce store lives for the whole server lifetime, so resubmitting the same proof is caught instantly.",
+    pp_static:"Interactive verification needs the Node verifier (npm run app). Static deployments render the dashboard only.",
+    pp_replay_toast:"Replay caught live — nonce already claimed",
+    pp_bad_json:"Invalid JSON",
+    static_loaded:"Static snapshot (generated at deploy) — interactive verification needs the server",
+    hero_1:"Don't trust the app. Verify the proof.",
+    hero_2:"PiProof lets applications issue cryptographically verifiable proofs that independent parties can verify against their own trusted state.",
+    pass_h:"AUREVIA Proof Passport", pass_sub:"One portable evidence record",
+    pass_class:"Event class", pass_action:"Action", pass_weight:"Weight (1–10000)",
+    pass_subject:"Subject (pseudonymous)", pass_issue:"Issue & Sign",
+    pass_download:"Download .json", pass_share:"Copy share link",
+    pass_issuer:"Issuer", pass_demo:"▶ Run the 60-second demo",
+    pass_send:"Open in Explorer", pass_import:"Import proof / passport",
+    pass_idle:"AWAITING PASSPORT", pass_valid:"✓ PASSPORT VALID", pass_invalid:"✗ INVALID PASSPORT",
+    pass_created:"Proof issued & signed — passport ready",
+    share_copied:"Share link copied — anyone holding it can verify independently",
+    file_loaded:"File loaded into verifier", issue_fail:"Issuer rejected the request",
+    pass_why:"Why carry a passport?",
+    pass_why_body:"An Evidence Passport bundles signed PEP/1 events under one content-addressed evidence root, bound to a pseudonymous subject. The holder — not the platform — carries the evidence. Anyone with the file or its share link re-checks every signature against their own trusted registry: no account, no trust in the issuing app. Don't trust the platform; verify the claim.",
+    carry_tagline:"Proofs you can carry. Evidence anyone can verify.",
+    dispute_h:"Dispute Mode", dispute_sub:"Deterministic evidence adjudication — from claim to final verdict",
+    dispute_btn:"Generate dispute report", dispute_export:"Export report (.json)",
+    dispute_idle:"NO DISPUTE REPORT YET", dispute_source:"Source document",
+    dispute_note:"Deterministic evidence adjudication — not a decentralized arbitration protocol. One adjudicable chain replaces screenshots: who issued it, what was signed, which policy, which epoch, is it epoch-bound, replayed?, key valid?, within policy? Three honest outcomes only: VALID · INVALID · UNVERIFIABLE. UNVERIFIABLE is never treated as a pass.",
+    agent_h:"Agent Evidence", agent_sub:"AI accountability trail",
+    agent_name:"Agent id", agent_task:"Completed task", agent_weight:"Weight",
+    agent_issue:"Issue agent evidence",
+    agent_note:"When an AI agent completes a task, its service signs the action; policy verification turns it into a proof; the proof becomes a portable audit trail any party can independently check.",
+    verify_link:"Public verification"
+  },
+  ar:{
+    title:"AUREVIA",
+    subtitle:"ثقة. تحقّق. شفافية.",
+    connecting:"جارٍ الاتصال…", live:"مباشر", offline:"غير متصل",
+    pi_account:"حساب باي", auth_btn:"تسجيل الدخول عبر باي", pay_btn:"دعم · 0.01 π",
+    pi_preview:"وضع المعاينة — افتح التطبيق داخل متصفح باي لتسجيل الدخول.",
+    pi_note:"المصادقة تستخدم SDK باي الرسمي. المدفوعات تتطلب تسجيل التطبيق في بوابة المطورين؛ حتى ذلك الحين هذا عرض صادق للآلية.",
+    signed_in:"مسجّل الدخول", auth_ok:"تم المصادقة باسم", auth_fail:"فشلت المصادقة",
+    pay_ok:"تم إرسال الدفعة — شكرًا لك!", pay_fail:"الدفعة أُلغيت أو فشلت",
+    sdk_missing:"بيئة باي غير متاحة — يعمل الآن في وضع المعاينة",
+    floor_h:"الأرضية السعرية الديناميكية", floor_unit:"وحدة مقابل للرمز · الأرضية الحدّية",
+    inv_h:"صحة ثابت x·y = k", intact:"سليم", compromised:"مخترَق",
+    escrow_h:"حالة قفل الإسكرو", escrow_none:"لا يوجد إثبات في اللقطة.",
+    escrow_verified:"ملغى ومُتحقق منه", escrow_invalid:"إثبات غير صالح",
+    lb_h:"لوحة التفاعل", lb_pioneer:"الرائد", lb_days:"أيام النشاط", lb_score:"النقاط",
+    footer_trust:"كل رقم هنا يأتي من لقطة واحدة قابلة للتحقق يجمّعها",
+    footer_trust2:"من توقيعات Ed25519 الموثقة بالسجل فقط. أعد الإنتاج:",
+    footer_scope:"رياضيات وصفية فوق أرقام مقدَّمة من المستدعي — هذه الصفحة لا تسعّر أو تقيّم أو تروّج لأي أصل.",
+    footer_product:"بنية تحتية للشفافية التشفيرية للأنظمة اللامركزية.",
+    footer_comm:"مشروع مجتمعي؛ غير تابع لفريق باي الأساسي ولا يشرف عليه.",
+    snap_loaded:"تم تحميل اللقطة وعرضها",
+    pp_h:"مستكشف PiProof", pp_sub:"تحقّق. لا تثق.",
+    pp_verify:"تحقق من الإثبات", pp_tamper_w:"عبث · الوزن ×1000",
+    pp_tamper_s:"عبث · قلب التوقيع", pp_reset:"إعادة تعيين",
+    pp_idle:"بانتظار إثبات", pp_trusted:"✓ إثبات موثوق",
+    pp_invalid:"✗ إثبات غير صالح", pp_checking:"جارٍ التحقق…",
+    pp_why:"لماذا يُعتبر هذا الإثبات موثوقًا؟",
+    pp_why_body:"الإثبات يغلّف حدثًا واحدًا موقّعًا بـEd25519. يعيد هذا المدقق فحص كل طبقة بنفسه مقابل نسخته الخاصة من السجل: سلامة الغلاف، جذر حقبة السجل، مخطط الادعاء، تسجيل المُصدر، حالة المفتاح (بما فيها الإلغاء)، الترميز الكنوني الحتمي، التوقيع، نافذة الصلاحية، سقف الوزن، الأهلية، والـnonce أحادي الاستخدام. لا يُوثق بالتطبيق المُصدر إطلاقًا — بل بالرياضيات فقط.",
+    pp_note:"التحقق يعمل على السيرفر بنفس كود src/verify.js حرفيًا. مخزن الـnonce يستمر طوال عمر السيرفر، لذا إعادة إرسال نفس الإثبات تُكتشف مباشرة.",
+    pp_static:"التحقق التفاعلي يحتاج مدقق Node (npm run app). النشر الساكن يعرض اللوحة فقط.",
+    pp_replay_toast:"تم ضبط إعادة الإصدار مباشرة — الـnonce مستخدم بالفعل",
+    pp_bad_json:"JSON غير صالح",
+    static_loaded:"لقطة ساكنة (مولّدة عند النشر) — التحقق التفاعلي يتطلب السيرفر",
+    hero_1:"لا تثق بالتطبيق. تحقّق من الإثبات.",
+    hero_2:"PiProof يتيح للتطبيقات إصدار إثباتات تشفيرية قابلة للتحقق، يستطيع أي طرف مستقل التحقق منها مقابل حالته الموثوقة الخاصة.",
+    pass_h:"جواز إثبات AUREVIA", pass_sub:"سجل إثبات واحد محمول",
+    pass_class:"فئة الحدث", pass_action:"الإجراء", pass_weight:"الوزن (1–10000)",
+    pass_subject:"الموضوع (اسم مستعار)", pass_issue:"إصدار وتوقيع",
+    pass_download:"تنزيل .json", pass_share:"نسخ رابط المشاركة",
+    pass_issuer:"الجهة المُصدِرة", pass_demo:"▶ شغّل العرض خلال 60 ثانية",
+    pass_send:"فتح في المستكشف", pass_import:"استيراد إثبات / جواز",
+    pass_idle:"بانتظار الجواز", pass_valid:"✓ الجواز صالح", pass_invalid:"✗ الجواز غير صالح",
+    pass_created:"تم إصدار الإثبات وتوقيعه — الجواز جاهز",
+    share_copied:"نُسخ رابط المشاركة — أي حامل له يستطيع التحقق بشكل مستقل",
+    file_loaded:"حُمّل الملف إلى المدقق", issue_fail:"رفض المُصدر الطلب",
+    pass_why:"لماذا تحمل جوازًا؟",
+    pass_why_body:"يجمع جواز الإثبات أحداث PEP/1 موقّعة تحت جذر إثبات واحد معنون بالمحتوى، مرتبط بموضوع يحمل اسمًا مستعارًا. الحامل — لا المنصة — هو من يحمل الدليل. أي شخص لديه الملف أو رابط المشاركة يعيد فحص كل توقيع مقابل سجله الموثوق الخاص: بلا حساب، وبلا ثقة في التطبيق المُصدر. لا تثق بالمنصة؛ تحقّق من الادعاء.",
+    carry_tagline:"أدلة تحملها معك. إثباتات يتحقق منها أي أحد.",
+    dispute_h:"وضع النزاعات", dispute_sub:"فصل أدلة حتمي — من الادعاء إلى الحكم النهائي",
+    dispute_btn:"توليد تقرير النزاع", dispute_export:"تصدير التقرير (.json)",
+    dispute_idle:"لا يوجد تقرير نزاع بعد", dispute_source:"المستند المصدر",
+    dispute_note:"فصل أدلة حتمي — وليس بروتوكول تحكيم لامركزي. سلسلة واحدة قابلة للفصل تستبدل لقطات الشاشة: من أصدره؟ ماذا وُقّع؟ أي سياسة؟ أي حقبة؟ هل الدليل مربوط بحقبة؟ هل أُعيد إصداره؟ هل المفتاح سليم؟ هل الادعاء داخل السياسة؟ ثلاث نتائج صادقة فقط: صالح · غير صالح · غير قابل للتحقق. «غير قابل للتحقق» لا يُعتبر نجاحًا أبدًا.",
+    agent_h:"أدلة الوكلاء", agent_sub:"سجل مساءلة الذكاء الاصطناعي",
+    agent_name:"معرّف الوكيل", agent_task:"المهمة المكتملة", agent_weight:"الوزن",
+    agent_issue:"إصدار دليل وكيل",
+    agent_note:"عندما يُكمل وكيل ذكاء اصطناعي مهمة، توقّع خدمته الإجراء؛ فيتحقق محرك السياسات منه فيصبح إثباتًا؛ والإثبات يصبح سجل تدقيق محمولًا يستطيع أي طرف التحقق منه باستقلالية.",
+    verify_link:"تحقق عام"
+  }
+};
+let lang = localStorage.getItem('lang') || 'en';
+function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.en[k]||k}
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    const key=el.dataset.i18nHtml, b=el.querySelector('b');
+    const html=t(key).replace(/<b>(.*)<\/b>/,'$1');
+    if(b){ el.childNodes[0].textContent=html+' '; } });
+  $('lang').textContent = lang==='ar' ? 'English' : 'العربية';
+}
+$('lang').onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('lang',lang);applyLang();render(lastSnap);};
+
+/* ---------- utils ---------- */
+const fmt=(n,d)=>Number(n).toLocaleString(lang==='ar'?'ar-EG':'en-US',{maximumFractionDigits:d??4});
+function toast(msg,kind=''){const d=document.createElement('div');d.className='toast '+kind;d.textContent=msg;
+  $('toasts').appendChild(d);setTimeout(()=>d.remove(),4200);}
+function badge(el,state,txt){el.className='badge '+(state===null?'neutral':state?'ok':'bad');el.textContent=txt;}
+function net(state,txt){$('netdot').className='statusdot '+state;$('nettxt').textContent=txt;}
+
+/* ---------- chart ---------- */
+let lastSnap=null;
+function drawK(series){
+  const c=$('kchart'),ctx=c.getContext('2d'),W=c.width,H=c.height,pad=46;
+  const dpr=window.devicePixelRatio||1;
+  if(c.width!==W*dpr){c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';ctx.scale(dpr,dpr);}
+  ctx.clearRect(0,0,W,H);
+  const ks=series.map(p=>p.k),min=Math.min(...ks)*.998,max=Math.max(...ks)*1.002;
+  const X=i=>pad+(W-2*pad)*i/(series.length-1);
+  const Y=v=>H-pad-(H-2*pad)*((v-min)/(max-min||1));
+  ctx.font='15px ui-monospace,monospace';
+  for(let g=0;g<=3;g++){const y=pad+(H-2*pad)*g/3;
+    ctx.strokeStyle='rgba(148,170,220,.12)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();
+    ctx.fillStyle='#93a0ba';ctx.textAlign=lang==='ar'?'right':'left';
+    ctx.fillText(fmt(max-(max-min)*g/3,0), lang==='ar'? W-pad+8:4, y+5);}
+  const area=ctx.createLinearGradient(0,pad,0,H-pad);
+  area.addColorStop(0,'rgba(245,196,81,.28)');area.addColorStop(1,'rgba(61,220,151,0)');
+  ctx.beginPath();series.forEach((p,i)=>i?ctx.lineTo(X(i),Y(p.k)):ctx.moveTo(X(0),Y(p.k)));
+  const line=new Path2D();series.forEach((p,i)=>i?line.lineTo(X(i),Y(p.k)):line.moveTo(X(0),Y(p.k)));
+  ctx.lineTo(X(series.length-1),H-pad);ctx.lineTo(X(0),H-pad);ctx.closePath();ctx.fillStyle=area;ctx.fill();
+  const grad=ctx.createLinearGradient(pad,0,W-pad,0);
+  grad.addColorStop(0,'#f5c451');grad.addColorStop(1,'#3ddc97');
+  ctx.strokeStyle=grad;ctx.lineWidth=4;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke(line);
+  const lastP=series[series.length-1],lx=X(series.length-1),ly=Y(lastP.k);
+  ctx.fillStyle='#3ddc97';ctx.shadowColor='#3ddc97';ctx.shadowBlur=14;
+  ctx.beginPath();ctx.arc(lx,ly,6,0,7);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='#eef3fb';ctx.textAlign='center';
+  ctx.fillText(fmt(lastP.k,0),Math.min(lx,W-60),ly-14);
+}
+
+/* ---------- render ---------- */
+function countUp(el,target,digits){
+  const start=performance.now(),dur=1100,from=0;
+  function step(now){const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+    el.textContent=fmt(from+(target-from)*e,digits);
+    if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+function render(s){
+  if(!s)return;
+  const f=s.price_floor;
+  countUp($('pfloor'),f.p_floor_marginal,4);
+  $('spot').textContent=f.spot_price.toPrecision(4);
+  $('avg').textContent=f.p_floor_average_realized.toPrecision(4);
+  $('supply').textContent=fmt(f.circulating_supply,0);
+  const pct=Math.max(1.5,Math.min(100,f.floor_to_spot_ratio*100));
+  requestAnimationFrame(()=>$('ratio-bar').style.width=pct+'%');
+  $('ratio-txt').textContent=(f.floor_to_spot_ratio*100).toFixed(2)+'%';
+
+  const ph=s.pool_health;
+  badge($('health'),ph.healthy,ph.healthy?t('intact'):t('compromised'));
+  $('kcur').textContent=fmt(ph.current_k,0);
+  $('kpeak').textContent=fmt(ph.peak_k,0);
+  $('dd').textContent=ph.max_drawdown_pct+'%';
+  $('ext').textContent=ph.extraction_events;
+  drawK(ph.invariant_series);
+
+  const e=s.escrow_lock_status,eb=$('escrow-badge');
+  $('escrow-sk').hidden=true;$('escrow-sk').style.display='none';
+  const body=$('escrow-body');body.hidden=false;
+  if(!e){badge(eb,null,'—');body.textContent=t('escrow_none');}
+  else if(e.verifiable){
+    badge(eb,true,t('escrow_verified'));
+    body.innerHTML=`<b>${e.escrow_id}</b> · ${e.state}<br>`+
+      `<span class="mono">${e.previous_key_fingerprint.slice(0,18)}…</span><br>`+
+      `<span class="mono">${e.anchor.slice(0,30)}…</span>`;
+    $('escrow-checks').innerHTML=e.checks.map(c=>`<span class="check">✓ ${c.check}</span>`).join('');
+  }else{
+    badge(eb,false,t('escrow_invalid'));
+    body.textContent=t('escrow_none');
+    $('escrow-checks').innerHTML=e.checks.filter(c=>!c.pass)
+      .map(c=>`<span class="check f">✗ ${c.check}</span>`).join('');
+  }
+
+  const board=s.engagement.leaderboard,maxScore=Math.max(...board.map(r=>r.score),1);
+  const medal=r=>r<=3?`<span class="rank-medal m${r}">${r}</span>`:`<span class="mn">${r}</span>`;
+  $('lb').innerHTML=board.map(r=>`
+    <tr><td>${medal(r.rank)}</td>
+    <td class="mono" title="${r.pioneer_uid_hash}">${r.pioneer_uid_hash.slice(3,15)}…</td>
+    <td>${fmt(r.poa_points,1)}</td><td>${fmt(r.pou_points,1)}</td>
+    <td>${r.active_days}/${r.window_days}</td><td>${r.consistency_factor.toFixed(3)}</td>
+    <td><div style="display:flex;align-items:center;gap:9px"><b>${fmt(r.score,2)}</b>
+      <div class="sbar" style="flex:1"><i style="width:${(r.score/maxScore*100).toFixed(1)}%"></i></div>
+    </div></td></tr>`).join('');
+}
+
+/* ---------- Pi SDK integration (official) ---------- */
+const PI={ready:false,user:null};
+(function initPi(){
+  const s=document.createElement('script');
+  s.src='https://sdk.minepi.com/pi-sdk.js';
+  s.async=true;
+  s.onload=()=>{
+    try{
+      Pi.init({version:'2.0'});
+      PI.ready=true;
+      $('btn-pay').disabled=false;
+      toast(lang==='ar'?'SDK باي جاهز':'Pi SDK ready','ok');
+    }catch(err){toast(t('sdk_missing'),'bad');}
+  };
+  s.onerror=()=>{/* preview mode: fine */};
+  document.head.appendChild(s);
+})();
+
+$('btn-auth').onclick=async()=>{
+  if(!PI.ready)return toast(t('sdk_missing'),'bad');
+  try{
+    const res=await Pi.authenticate(['username','payments'],p=>console.log('incomplete',p));
+    PI.user=res.user;
+    $('pi-user').innerHTML=`<span class="avatar">${(res.user.username||'?')[0].toUpperCase()}</span>
+      <div><b>@${res.user.username}</b><br><small class="unit">${t('signed_in')} · uid ${res.user.uid.slice(0,8)}…</small></div>`;
+    toast(`${t('auth_ok')} @${res.user.username}`,'ok');
+  }catch(err){toast(t('auth_fail')+(err&&err.message?': '+err.message:''),'bad');}
+};
+
+$('btn-pay').onclick=()=>{
+  if(!PI.ready)return toast(t('sdk_missing'),'bad');
+  try{
+    Pi.createPayment({
+      amount:0.01,
+      memo:'Pi Transparency Dashboard — support demo',
+      metadata:{app:'piproof',action:'support-demo'}
+    },{
+      onReadyForServerApproval:pid=>toast(`approval needed · payment ${pid.slice(0,8)}…`),
+      onReadyForServerComplete:txid=>toast(`${t('pay_ok')} tx ${txid.slice(0,8)}…`,'ok'),
+      onCancel:pid=>toast(t('pay_fail'),'bad'),
+      onError:(err,payment)=>toast(t('pay_fail')+(err?': '+err:''),'bad')
+    });
+  }catch(err){toast(t('pay_fail')+(err&&err.message?': '+err.message:''),'bad');}
+};
+
+/* ---------- PiProof explorer ---------- */
+const PP={sample:null,busy:false};
+function ppBanner(state,txt){const b=$('pp-verdict');b.className='pp-banner '+state;b.textContent=txt;}
+function ppSetDisabled(dis){['pp-verify','pp-tamper-w','pp-tamper-s','pp-reset'].forEach(id=>$(id).disabled=dis);}
+async function ppLoadSample(){
+  try{
+    const r=await fetch('api/sample-proof');
+    if(!r.ok)throw new Error(r.status);
+    const j=await r.json();
+    PP.sample=j.proof;
+    $('pp-in').value=JSON.stringify(j.proof,null,2);
+  }catch(e){
+    PP.sample=null;ppSetDisabled(true);
+    $('pp-static').hidden=false;
+    $('pp-in').placeholder=t('pp_static');
+    $('pass-issue').disabled=true;
+  }
+}
+function renderProof(r){
+  ppBanner(r.ok?'ok':'bad',r.ok?t('pp_trusted'):t('pp_invalid'));
+  $('pp-steps').innerHTML=r.steps.map((s,i)=>
+    `<div class="pp-step ${s.pass?'p':'f'}" style="animation-delay:${i*55}ms">
+       <span class="ic">${s.pass?'✓':'✗'}</span><span>${s.label}</span>
+       ${s.detail?`<small title="${String(s.detail).replace(/"/g,'&quot;')}">${s.detail}</small>`:''}
+     </div>`).join('');
+}
+async function ppVerify(){
+  if(PP.busy)return;
+  let doc;
+  try{doc=JSON.parse($('pp-in').value);}
+  catch(e){return toast(t('pp_bad_json'),'bad');}
+  const isPassport=doc&&typeof doc==='object'&&doc.type==='AUREVIA-Evidence-Passport';
+  PP.busy=true;ppBanner('idle',t('pp_checking'));
+  try{
+    const r=await fetch(isPassport?'api/verify-passport':'api/verify-proof',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify(isPassport?{passport:doc}:{proof:doc})});
+    const j=await r.json();
+    if(isPassport)renderPassport(j);else renderProof(j);
+    if(j.code==='REPLAY_DETECTED')toast(t('pp_replay_toast'),'bad');
+    if(isPassport&&!j.ok&&document.getElementById('pass-card')){
+      passBanner('bad',t('pass_invalid'));document.getElementById('pass-card').scrollIntoView({behavior:'smooth',block:'start'});}
+  }catch(e){toast('verifier unreachable: '+e.message,'bad');ppBanner('bad',t('pp_invalid'));}
+  PP.busy=false;
+}
+function ppMutate(fn,label){
+  let proof;
+  try{proof=JSON.parse($('pp-in').value);}
+  catch(e){return toast(t('pp_bad_json'),'bad');}
+  try{fn(proof);}catch(e){return toast(e.message,'bad');}
+  $('pp-in').value=JSON.stringify(proof,null,2);
+  toast(label);setTimeout(ppVerify,250);
+}
+$('pp-verify').onclick=ppVerify;
+$('pp-reset').onclick=()=>{if(PP.sample){$('pp-in').value=JSON.stringify(PP.sample,null,2);}renderProof({ok:true,steps:[],code:null});ppBanner('idle',t('pp_idle'));};
+$('pp-tamper-w').onclick=()=>ppMutate(p=>{
+  if(typeof p.event?.weight!=='number')throw new Error('no event.weight to tamper');
+  p.event.weight=p.event.weight*1000;
+},lang==='ar'?'تم رفع الوزن ×1000 — التوقيع لم يُحدَّث':'weight raised ×1000 — signature untouched');
+$('pp-tamper-s').onclick=()=>ppMutate(p=>{
+  const s=p.event?.signature;if(typeof s!=='string'||s.length<2)throw new Error('no signature to flip');
+  p.event.signature=(s===s.toUpperCase()&&/[A-Z]/.test(s))?s.slice(0,-1)+String.fromCharCode(s.charCodeAt(s.length-2)):s.split('').reverse().join('');
+},lang==='ar'?'تم قلب أحرف التوقيع':'signature bytes flipped');
+
+/* ---------- AUREVIA Proof Passport ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PASS_ACTIONS={A:['complete_transaction'],B:['finish_kyc_flow'],C:['daily_login']};
+const PASS={passport:null,busy:false};
+function passBanner(state,txt){const b=$('pass-verdict');b.className='pp-banner '+state;b.textContent=txt;}
+function stepHtml(s,i){
+  return `<div class="pp-step ${s.pass?'p':'f'}" style="animation-delay:${i*55}ms">
+     <span class="ic">${s.pass?'✓':'✗'}</span><span>${esc(s.label)}</span>
+     ${s.detail?`<small title="${String(s.detail).replace(/"/g,'&quot;')}">${esc(s.detail)}</small>`:''}
+   </div>`;
+}
+function renderPassport(r){
+  passBanner(r.ok?'ok':'bad',r.ok?t('pass_valid'):t('pass_invalid'));
+  const head=$('pass-head');
+  if(r.summary){
+    const issuers=[...new Set((r.results||[]).map(x=>x.event?.app_id).filter(Boolean))];
+    head.hidden=false;
+    head.innerHTML=`<span>${esc(t('pass_subject'))}: <b>${esc(r.summary.subject??'—')}</b></span>`+
+      `<span>proofs <b>${r.summary.proofs_valid}/${r.summary.proofs_total}</b></span>`+
+      (issuers.length?`<span title="${esc(issuers.join(', '))}">issuers <b>${esc(issuers.length)}</b></span>`:'')+
+      `<span title="${esc(r.summary.evidence_root)}">root <b>${esc(String(r.summary.evidence_root).slice(0,14))}…</b></span>`;
+  }else head.hidden=true;
+  let html=r.steps.map(stepHtml).join('');
+  for(const res of r.results||[]){
+    html+=`<div class="pp-grouplabel">— proof #${res.index+1} —</div>`+res.steps.map(stepHtml).join('');
+  }
+  $('pass-steps').innerHTML=html;
+}
+function fillActions(){
+  const c=$('pass-class').value;
+  $('pass-action').innerHTML=PASS_ACTIONS[c].map(a=>`<option value="${a}">${a}</option>`).join('');
+}
+fillActions();
+$('pass-class').onchange=fillActions;
+$('pass-issue').onclick=async()=>{
+  if(PASS.busy)return;
+  PASS.busy=true;
+  try{
+    const r=await fetch('api/passport-issue',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({
+        issuer:$('pass-issuer').value,
+        action_class:$('pass-class').value,
+        action_id:$('pass-action').value,
+        weight:Number($('pass-weight').value),
+        subject:$('pass-subject').value.trim()||undefined
+      })});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||t('issue_fail'));
+    PASS.passport=j.passport;
+    $('pass-out').value=JSON.stringify(j.passport,null,2);
+    ['pass-download','pass-share','pass-send'].forEach(id=>$(id).disabled=false);
+    toast(t('pass_created'),'ok');
+    setTimeout(()=>{ppVerify();setTimeout(runDispute,900);},300);
+  }catch(e){toast(e.message,'bad');}
+  PASS.busy=false;
+};
+$('pass-download').onclick=()=>{
+  if(!PASS.passport)return;
+  const blob=new Blob([JSON.stringify(PASS.passport,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='proof-passport.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+};
+const b64u=s=>btoa(Array.from(new TextEncoder().encode(s),c=>String.fromCharCode(c)).join(''))
+  .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+$('pass-share').onclick=async()=>{
+  if(!PASS.passport)return;
+  const frag=location.href.split('#')[0]+'#p='+b64u(JSON.stringify(PASS.passport));
+  let link=frag;
+  try{
+    const r=await fetch('api/share',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({doc:PASS.passport})});
+    if(r.ok){const j=await r.json();if(j.id)link=location.origin+'/p/'+j.id;}
+  }catch(e){/* static deployment — fragment link still works */}
+  try{await navigator.clipboard.writeText(link);toast(t('share_copied'),'ok');}
+  catch(e){window.prompt('',link);}
+};
+$('pass-send').onclick=()=>{
+  if(!PASS.passport)return;
+  $('pp-in').value=JSON.stringify(PASS.passport,null,2);
+  document.getElementById('pp-card').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(ppVerify,350);
+};
+/* ---------- Guided 60-second demo ---------- */
+const AR=(en,ar)=>lang==='ar'?ar:en;
+const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
+const bumpFirstWeight=(o)=>{
+  if(!o||typeof o!=='object')return false;
+  if(o.event&&typeof o.event.weight==='number'){o.event.weight*=1000;return true;}
+  for(const v of Object.values(o)){if(bumpFirstWeight(v))return true;}
+  return false;
+};
+async function waitForPassport(){
+  let tries=0;
+  while((PASS.busy||!PASS.passport)&&tries++<60)await wait(100);
+  if(!PASS.passport)throw new Error(AR('issue failed','فشل الإصدار'));
+}
+$('pass-demo').onclick=async()=>{
+  const btn=$('pass-demo');
+  if(btn.disabled)return;
+  if($('pass-issue').disabled)return toast(t('pp_static'),'bad');
+  btn.disabled=true;
+  try{
+    $('pass-issuer').value='marketplace-demo';
+    $('pass-class').value='A';fillActions();
+    $('pass-action').value='complete_transaction';
+    $('pass-weight').value='100';
+    $('pass-subject').value='alice-demo';
+    toast(AR('① Issue — completed transaction · weight 100 · issuer: Demo Marketplace','① إصدار — عملية مكتملة · وزن 100 · الجهة: Demo Marketplace'));
+    await wait(900);
+    $('pass-issue').click();
+    await waitForPassport();
+    toast('✓ PROOF CREATED','ok');
+    await wait(1300);
+    $('pass-send').click();
+    toast(AR('② Verify independently against your own registry state','② تحقق مستقل مقابل حالة السجل لديك'));
+    await wait(1900);
+    toast(AR('✓ VALID — every signature, nonce and policy check passes','✓ VALID — كل التوقيعات والـnonce والسياسة صحيحة'),'ok');
+    await wait(1300);
+    const doc=JSON.parse($('pp-in').value);
+    if(bumpFirstWeight(doc))$('pp-in').value=JSON.stringify(doc,null,2);
+    toast(AR('③ Tamper — weight 100 → 100,000, signature left untouched','③ عبث — الوزن 100 ← 100,000 دون تحديث التوقيع'));
+    ppVerify();
+    await wait(1900);
+    toast(AR('✗ INVALID — the tampered document is rejected instantly','✗ INVALID — الوثيقة المعبوثة تُرفض فورًا'),'bad');
+    await wait(1300);
+    $('pp-in').value=JSON.stringify(PASS.passport,null,2);
+    toast(AR('④ Restore the original document','④ استعادة الوثيقة الأصلية'));
+    ppVerify();
+    await wait(1700);
+    toast(AR('✓ VALID again — carry it anywhere, verify it anywhere','✓ VALID مجددًا — خذها معك وتحقق منها في أي مكان'),'ok');
+    await wait(1100);
+    const dl=$('pass-download');
+    dl.style.outline='2px solid var(--gold)';
+    setTimeout(()=>{dl.style.outline='';},3000);
+    toast(AR('⑤ Download proof-passport.json — anyone can run: npx piproof passport-verify proof-passport.json','⑤ نزّل proof-passport.json — أي شخص يستطيع تنفيذ: npx piproof passport-verify proof-passport.json'),'ok');
+  }catch(e){toast(e.message,'bad');}
+  btn.disabled=false;
+};
+$('pass-file').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(txt=>{
+    let j;try{j=JSON.parse(txt);}catch(_){return toast(t('pp_bad_json'),'bad');}
+    if(!j||typeof j!=='object'||(j.type!=='PiProof'&&j.type!=='AUREVIA-Evidence-Passport'))
+      return toast('unsupported type — expected PiProof or AUREVIA-Evidence-Passport','bad');
+    $('pp-in').value=JSON.stringify(j,null,2);
+    document.getElementById('pp-card').scrollIntoView({behavior:'smooth',block:'start'});
+    toast(t('file_loaded'),'ok');
+    setTimeout(ppVerify,400);
+  });
+  e.target.value='';
+};
+(function openShared(){
+  const m=(location.hash||'').match(/^#p=([A-Za-z0-9_-]+)$/);if(!m)return;
+  try{
+    const b=m[1].replace(/-/g,'+').replace(/_/g,'/');
+    const json=new TextDecoder().decode(Uint8Array.from(atob(b+'='.repeat((4-b.length%4)%4)),c=>c.charCodeAt(0)));
+    const j=JSON.parse(json);
+    if(!j||typeof j!=='object'||(j.type!=='PiProof'&&j.type!=='AUREVIA-Evidence-Passport'))return;
+    $('pp-in').value=JSON.stringify(j,null,2);
+    document.getElementById('pp-card').scrollIntoView({block:'start'});
+    setTimeout(ppVerify,500);
+  }catch(e){}
+})();
+
+/* ---------- Dispute Mode ---------- */
+const DISPUTE={report:null};
+function disputeBanner(state,txt){const b=$('dispute-verdict');b.className='pp-banner '+state;b.textContent=txt;}
+async function runDispute(){
+  let doc=null;
+  try{
+    if(PASS.passport)doc=PASS.passport;
+    else if($('pass-out').value.trim())doc=JSON.parse($('pass-out').value);
+    else doc=JSON.parse($('pp-in').value);
+  }catch(e){return toast(t('pp_bad_json'),'bad');}
+  try{
+    const r=await fetch('api/dispute',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({doc})});
+    DISPUTE.report=await r.json();
+  }catch(e){return toast('dispute engine unreachable: '+e.message,'bad');}
+  renderDispute(DISPUTE.report);
+}
+function renderDispute(rep){
+  const v=rep.verdict;
+  disputeBanner(v==='VALID'?'ok':v==='INVALID'?'bad':'idle',
+    v==='VALID'?'✓ VALID':v==='INVALID'?'✗ INVALID':'? UNVERIFIABLE');
+  const tbl=$('dispute-chain');
+  tbl.hidden=false;
+  tbl.innerHTML=rep.chain.map(c=>{
+    const ans=typeof c.answer==='object'&&c.answer!==null
+      ?`<span class="mono" title="${esc(JSON.stringify(c.answer))}">${esc(JSON.stringify(c.answer).slice(0,120))}${JSON.stringify(c.answer).length>120?'…':''}</span>`
+      :esc(String(c.answer));
+    return `<tr><td class="q">${esc(c.question.replace(/_/g,' '))}</td><td>${ans}</td><td class="s ${c.status}">${c.status==='OK'?'✓ OK':c.status}</td></tr>`;
+  }).join('');
+  $('dispute-export').disabled=false;
+}
+$('dispute-run').onclick=runDispute;
+$('dispute-export').onclick=()=>{
+  if(!DISPUTE.report)return;
+  const blob=new Blob([JSON.stringify(DISPUTE.report,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='dispute-report.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+};
+
+/* ---------- Agent Evidence ---------- */
+$('agent-issue').onclick=async()=>{
+  if(PASS.busy)return;
+  PASS.busy=true;
+  try{
+    const r=await fetch('api/agent-evidence',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({
+        agent:$('agent-name').value.trim(),
+        task:$('agent-task').value,
+        weight:Number($('agent-weight').value)
+      })});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||t('issue_fail'));
+    PASS.passport=j.passport;
+    $('pass-out').value=JSON.stringify(j.passport,null,2);
+    ['pass-download','pass-share','pass-send'].forEach(id=>$(id).disabled=false);
+    toast(t('pass_created'),'ok');
+    document.getElementById('pass-card').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>{ppVerify();setTimeout(runDispute,900);},300);
+  }catch(e){toast(e.message,'bad');}
+  PASS.busy=false;
+};
+
+/* ---------- boot ---------- */
+applyLang();
+ppLoadSample();
+fetch('api/snapshot').then(r=>{if(!r.ok)throw new Error('api '+r.status);return r.json()}).then(s=>{
+  lastSnap=s;render(s);
+  net('live',t('live'));
+  toast(t('snap_loaded'),'ok');
+}).catch(()=>{
+  /* static deployment fallback: pre-generated snapshot.json */
+  fetch('snapshot.json').then(r=>{if(!r.ok)throw new Error('no static snapshot');return r.json()}).then(s=>{
+    lastSnap=s;render(s);
+    net('warn','STATIC');
+    toast(t('static_loaded'));
+  }).catch(e=>{
+    net('err',t('offline'));
+    toast('Snapshot error: '+e.message,'bad');
+  });
+});
+document.querySelectorAll('.card').forEach((c,i)=>{
+  setTimeout(()=>c.classList.add('in'),120+i*110);
+});
+/* fail-safe: never leave content hidden, even if something above throws */
+setTimeout(()=>document.querySelectorAll('.card:not(.in)').forEach(c=>c.classList.add('in')),1600);
+</script>
+</body>
+</html>

@@ -5,3 +5,7 @@ keys/
 nonces.jsonl
 __pycache__/
 *.pyc
+*.egg-info/
+build/
+
+states/

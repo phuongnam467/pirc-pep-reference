@@ -1,0 +1,151 @@
+{
+  "profile": "piproof-canonical-v1",
+  "spec": "docs/CANONICALIZATION.md",
+  "note": "input is RAW JSON text; implementations must parse then canonicalize. expected.error = substring of the rejection reason.",
+  "vectors": [
+    {
+      "id": "canon-001-int-zero",
+      "description": "zero is a legal non-negative safe integer",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"z\":0}",
+      "expected": {
+        "canonical": "{\"z\":0}"
+      }
+    },
+    {
+      "id": "canon-002-safe-int-max",
+      "description": "Number.MAX_SAFE_INTEGER (2^53-1) is representable exactly",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"n\":9007199254740991}",
+      "expected": {
+        "canonical": "{\"n\":9007199254740991}"
+      }
+    },
+    {
+      "id": "canon-003-unsafe-int",
+      "description": "2^53 exceeds the safe-integer bound — rejected",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"n\":9007199254740992}",
+      "expected": {
+        "error": "non-canonical number: 9007199254740992"
+      }
+    },
+    {
+      "id": "canon-004-negative-int",
+      "description": "negative integers are outside the profile — rejected",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"n\":-1}",
+      "expected": {
+        "error": "non-canonical number: -1"
+      }
+    },
+    {
+      "id": "canon-005-float",
+      "description": "fractional values are outside the profile — rejected",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"n\":1.5}",
+      "expected": {
+        "error": "non-canonical number: 1.5"
+      }
+    },
+    {
+      "id": "canon-006-exponent-form",
+      "description": "exponent notation parses to a non-safe-integer double — rejected",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"n\":1e21}",
+      "expected": {
+        "error": "non-canonical number: 1e+21"
+      }
+    },
+    {
+      "id": "canon-007-nfc-string-equivalence",
+      "description": "decomposed accents normalize to composed NFC form",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"word\":\"re\\u0301sume\\u0301\"}",
+      "expected": {
+        "canonical": "{\"word\":\"résumé\"}"
+      }
+    },
+    {
+      "id": "canon-008-astral-plane",
+      "description": "astral-plane characters survive as proper surrogate pairs",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"emoji\":\"\\ud83d\\ude00\"}",
+      "expected": {
+        "canonical": "{\"emoji\":\"😀\"}"
+      }
+    },
+    {
+      "id": "canon-009-control-char-escape",
+      "description": "control characters are minimally escaped as \\uXXXX",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"c\":\"a\\u0001b\"}",
+      "expected": {
+        "canonical": "{\"c\":\"a\\u0001b\"}"
+      }
+    },
+    {
+      "id": "canon-010-quote-backslash-escape",
+      "description": "quote and backslash follow standard JSON escaping",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"q\":\"say \\\"hi\\\" \\\\\"}",
+      "expected": {
+        "canonical": "{\"q\":\"say \\\"hi\\\" \\\\\"}"
+      }
+    },
+    {
+      "id": "canon-011-key-order-basic",
+      "description": "object keys are emitted in ascending order",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"b\":2,\"a\":1,\"c\":3}",
+      "expected": {
+        "canonical": "{\"a\":1,\"b\":2,\"c\":3}"
+      }
+    },
+    {
+      "id": "canon-012-ligature-nfc-invariance",
+      "description": "NFC leaves the FF ligature U+FB03 intact (ligatures have no canonical decomposition, only compatibility): ANGSTROM SIGN U+212B normalizes to U+00C5 and both sort orders coincide, so raw-sort and NFC-form-sort agree here",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"\\u212b\":1,\"\\ufb03\":2}",
+      "expected": {
+        "canonical": "{\"Å\":1,\"ﬃ\":2}"
+      }
+    },
+    {
+      "id": "canon-013-nfc-key-collision-rejected",
+      "description": "two distinct raw keys that NFC-fold to the same key are a hard error, never a silent merge",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"e\\u0301\":1,\"\\u00e9\":2}",
+      "expected": {
+        "error": "normalized key collision under NFC: \"é\""
+      }
+    },
+    {
+      "id": "canon-014-nested-mixed",
+      "description": "nested containers mix all legal value kinds deterministically",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"arr\":[{\"k\":false},{\"k\":true},null],\"s\":\"x\",\"top\":{\"deep\":{\"i\":42}}}",
+      "expected": {
+        "canonical": "{\"arr\":[{\"k\":false},{\"k\":true},null],\"s\":\"x\",\"top\":{\"deep\":{\"i\":42}}}"
+      }
+    },
+    {
+      "id": "canon-015-empty-containers",
+      "description": "empty array and object serialize compactly",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"a\":[],\"o\":{}}",
+      "expected": {
+        "canonical": "{\"a\":[],\"o\":{}}"
+      }
+    },
+    {
+      "id": "canon-016-nfc-sort-flip",
+      "description": "Profile v1.1 discriminator: C-CEDILLA U+00C7 sorts before ANGSTROM SIGN U+212B raw, but NFC(U+212B)=U+00C5 sorts before NFC(U+00C7)=U+00C7 — so the emitted order flips versus raw-key sorting, and canon(parse(canon(x))) stays a fixed point",
+      "profile": "piproof-canonical-v1",
+      "input": "{\"\\u00c7\":1,\"\\u212b\":2}",
+      "expected": {
+        "canonical": "{\"Å\":2,\"Ç\":1}"
+      }
+    }
+  ]
+}
